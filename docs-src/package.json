@@ -12,7 +12,8 @@
   "dependencies": {
     "faker": "^4.1.0",
     "vue": "^2.6.11",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-virtual-scroller": "^1.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

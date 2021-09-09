@@ -1,15 +1,16 @@
 <template>
    <div>
        <div v-for="(item, index) of list">
-           {{item.name}}
+           <!--{{item.name}}-->
+           <img :src="item.url">
        </div>
    </div>
 </template>
 
 <script>
     let listTemp = []
-    for (let i = 0; i < 100; i++) {
-        listTemp.push({name: 'gsd' + i, id: i})
+    for (let i = 0; i < 2000; i++) {
+        listTemp.push({name: 'gsd' + i, id: i, url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()})
     }
     export default {
         name: "MyDemo1",
