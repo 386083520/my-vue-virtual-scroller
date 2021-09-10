@@ -10,7 +10,7 @@
                 v-for="(view, index) of pool"
                 :key="index"
                 class="vue-recycle-scroller__item-view">
-                <slot :item="view"></slot>
+                <slot :item="view.item"></slot>
             </div>
         </div>
         <div class="vue-recycle-scroller__slot">
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-    import {props} from "./common";
+    import {props, simpleArray} from "./common";
     import config from '../config'
     export default {
         name: "RecycleScroller",
@@ -35,6 +35,14 @@
             itemSize: {
                 type: Number,
                 default: null,
+            },
+            typeField: {
+                type: String,
+                default: 'type',
+            },
+            emitUpdate: {
+                type: Boolean,
+                default: false,
             }
         },
         data() {
@@ -43,8 +51,14 @@
                 totalSize: 0
             }
         },
+        computed: {
+            simpleArray
+        },
         created () {
-
+            this.$_startIndex = 0
+            this.$_endIndex = 0
+            this.$_views = new Map()
+            this.$_unusedViews = new Map()
         },
         mounted () {
             this.$nextTick(() => {
@@ -52,12 +66,25 @@
             })
         },
         methods: {
+            addView (pool, index, item, key, type) {
+                const view = {
+                    item,
+                    position: 0,
+                }
+                pool.push(view)
+                return view
+            },
             updateVisibleItems (checkItem, checkPositionDiff = false) {
+                const views = this.$_views
+                const unusedViews = this.$_unusedViews
+                const keyField = this.simpleArray ? null : this.keyField
                 const itemSize = this.itemSize
                 const items = this.items
                 const count = items.length
+                const pool = this.pool
                 let startIndex, endIndex
                 let totalSize
+                const typeField = this.typeField
                 if (!count) {
                     startIndex = endIndex = totalSize = 0
                 } else {
@@ -86,6 +113,57 @@
                     this.itemsLimitError()
                 }
                 this.totalSize = totalSize
+
+                let view
+                const continuous = startIndex <= this.$_endIndex && endIndex >= this.$_startIndex
+                if (this.$_continuous !== continuous) {
+                    console.log('gsdcontinuous',this.$_continuous, continuous)
+                    if (continuous) {
+                        views.clear()
+                        unusedViews.clear()
+                        for (let i = 0, l = pool.length; i < l; i++) {
+                        }
+                    }
+                    this.$_continuous = continuous
+                } else if (continuous) {
+
+                }
+                const unusedIndex = continuous ? null : new Map()
+                let item, type, unusedPool
+                for (let i = startIndex; i < endIndex; i++) {
+                    item = items[i]
+                    const key = keyField ? item[keyField] : item
+                    if (key == null) {
+                        throw new Error(`Key is ${key} on item (keyField is '${keyField}')`)
+                    }
+                    view = views.get(key)
+                    if (!view) {
+                        type = item[typeField]
+                        unusedPool = unusedViews.get(type)
+                        if (continuous) {
+                            if (unusedPool && unusedPool.length) {
+
+                            } else {
+                                view = this.addView(pool, i, item, key, type)
+                            }
+                        } else {
+                        }
+                        views.set(key, view)
+                    } else {
+                    }
+                    if (itemSize === null) {
+
+                    } else {
+                        view.position = i * itemSize
+                    }
+                }
+                this.$_startIndex = startIndex
+                this.$_endIndex = endIndex
+                console.log('gsdpool', pool)
+                if (this.emitUpdate) this.$emit('update', startIndex, endIndex)
+                return {
+                    continuous,
+                }
             },
             itemsLimitError () {
                 throw new Error('Rendered items limit reached')

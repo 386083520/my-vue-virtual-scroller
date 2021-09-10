@@ -8,8 +8,15 @@
       items: {
         type: Array,
         required: true
+      },
+      keyField: {
+        type: String,
+        default: 'id'
       }
     };
+    function simpleArray() {
+      return this.items.length && typeof this.items[0] !== 'object';
+    }
 
     var config = {
       itemsLimit: 1000
@@ -26,6 +33,14 @@
         itemSize: {
           type: Number,
           default: null
+        },
+        typeField: {
+          type: String,
+          default: 'type'
+        },
+        emitUpdate: {
+          type: Boolean,
+          default: false
         }
       },
 
@@ -36,7 +51,16 @@
         };
       },
 
-      created() {},
+      computed: {
+        simpleArray
+      },
+
+      created() {
+        this.$_startIndex = 0;
+        this.$_endIndex = 0;
+        this.$_views = new Map();
+        this.$_unusedViews = new Map();
+      },
 
       mounted() {
         this.$nextTick(() => {
@@ -45,12 +69,26 @@
       },
 
       methods: {
+        addView(pool, index, item, key, type) {
+          const view = {
+            item,
+            position: 0
+          };
+          pool.push(view);
+          return view;
+        },
+
         updateVisibleItems(checkItem, checkPositionDiff = false) {
+          const views = this.$_views;
+          const unusedViews = this.$_unusedViews;
+          const keyField = this.simpleArray ? null : this.keyField;
           const itemSize = this.itemSize;
           const items = this.items;
           const count = items.length;
+          const pool = this.pool;
           let startIndex, endIndex;
           let totalSize;
+          const typeField = this.typeField;
 
           if (!count) {
             startIndex = endIndex = totalSize = 0;
@@ -81,6 +119,58 @@
           }
 
           this.totalSize = totalSize;
+          let view;
+          const continuous = startIndex <= this.$_endIndex && endIndex >= this.$_startIndex;
+
+          if (this.$_continuous !== continuous) {
+            console.log('gsdcontinuous', this.$_continuous, continuous);
+
+            if (continuous) {
+              views.clear();
+              unusedViews.clear();
+
+              for (let i = 0, l = pool.length; i < l; i++) {}
+            }
+
+            this.$_continuous = continuous;
+          }
+          let item, type, unusedPool;
+
+          for (let i = startIndex; i < endIndex; i++) {
+            item = items[i];
+            const key = keyField ? item[keyField] : item;
+
+            if (key == null) {
+              throw new Error(`Key is ${key} on item (keyField is '${keyField}')`);
+            }
+
+            view = views.get(key);
+
+            if (!view) {
+              type = item[typeField];
+              unusedPool = unusedViews.get(type);
+
+              if (continuous) {
+                if (unusedPool && unusedPool.length) ; else {
+                  view = this.addView(pool, i, item, key, type);
+                }
+              }
+
+              views.set(key, view);
+            }
+
+            if (itemSize === null) ; else {
+              view.position = i * itemSize;
+            }
+          }
+
+          this.$_startIndex = startIndex;
+          this.$_endIndex = endIndex;
+          console.log('gsdpool', pool);
+          if (this.emitUpdate) this.$emit('update', startIndex, endIndex);
+          return {
+            continuous
+          };
         },
 
         itemsLimitError() {
@@ -202,7 +292,7 @@
             return _c(
               "div",
               { key: index, staticClass: "vue-recycle-scroller__item-view" },
-              [_vm._t("default", null, { item: view })],
+              [_vm._t("default", null, { item: view.item })],
               2
             )
           }),
@@ -223,7 +313,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-de085a22";
+      const __vue_scope_id__ = "data-v-83ca2248";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
