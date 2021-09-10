@@ -4,12 +4,105 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global['vue-virtual-scroller'] = {}));
 }(this, (function (exports) { 'use strict';
 
-    //
-    //
-    //
+    const props = {
+      items: {
+        type: Array,
+        required: true
+      }
+    };
+
+    var config = {
+      itemsLimit: 1000
+    };
+
     //
     var script = {
-      name: "RecycleScroller"
+      name: "RecycleScroller",
+      props: { ...props,
+        buffer: {
+          type: Number,
+          default: 200
+        },
+        itemSize: {
+          type: Number,
+          default: null
+        }
+      },
+
+      data() {
+        return {
+          pool: [],
+          totalSize: 0
+        };
+      },
+
+      created() {},
+
+      mounted() {
+        this.$nextTick(() => {
+          this.updateVisibleItems(true);
+        });
+      },
+
+      methods: {
+        updateVisibleItems(checkItem, checkPositionDiff = false) {
+          const itemSize = this.itemSize;
+          const items = this.items;
+          const count = items.length;
+          let startIndex, endIndex;
+          let totalSize;
+
+          if (!count) {
+            startIndex = endIndex = totalSize = 0;
+          } else {
+            const scroll = this.getScroll();
+
+            this.$_lastUpdateScrollPosition = scroll.start;
+            const buffer = this.buffer;
+            scroll.start -= buffer; // 300 -> 100
+
+            scroll.end += buffer; // 900 -> 1100
+
+            if (itemSize === null) ; else {
+              startIndex = ~~(scroll.start / itemSize); // 310/50 -> 6
+
+              endIndex = Math.ceil(scroll.end / itemSize); // 1020/50 -> 21
+
+              startIndex < 0 && (startIndex = 0);
+              endIndex > count && (endIndex = count);
+              totalSize = count * itemSize;
+            }
+
+            console.log('gsdupdateVisibleItems', totalSize, scroll.start, scroll.end, scroll, startIndex, endIndex);
+          }
+
+          if (endIndex - startIndex > config.itemsLimit) {
+            this.itemsLimitError();
+          }
+
+          this.totalSize = totalSize;
+        },
+
+        itemsLimitError() {
+          throw new Error('Rendered items limit reached');
+        },
+
+        getScroll() {
+          const {
+            $el: el
+          } = this;
+          let scrollState;
+          scrollState = {
+            start: el.scrollTop,
+            // scrollTop 值是这个元素的内容顶部（卷起来的）到它的视口可见内容（的顶部）的距离的度量
+            end: el.scrollTop + el.clientHeight // clientHeight 它是元素内部的高度(单位像素)，包含内边距，但不包括水平滚动条、边框和外边距
+
+          };
+          console.log('gsdscrollState', scrollState);
+          return scrollState;
+        }
+
+      }
     };
 
     function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -94,7 +187,35 @@
       var _vm = this;
       var _h = _vm.$createElement;
       var _c = _vm._self._c || _h;
-      return _c("div", [_vm._v("scroller")])
+      return _c("div", { staticClass: "vue-recycle-scroller" }, [
+        _c(
+          "div",
+          { staticClass: "vue-recycle-scroller__slot" },
+          [_vm._t("before")],
+          2
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "vue-recycle-scroller__item-wrapper" },
+          _vm._l(_vm.pool, function(view, index) {
+            return _c(
+              "div",
+              { key: index, staticClass: "vue-recycle-scroller__item-view" },
+              [_vm._t("default", null, { item: view })],
+              2
+            )
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "vue-recycle-scroller__slot" },
+          [_vm._t("after")],
+          2
+        )
+      ])
     };
     var __vue_staticRenderFns__ = [];
     __vue_render__._withStripped = true;
@@ -102,7 +223,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-16b1379e";
+      const __vue_scope_id__ = "data-v-de085a22";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
