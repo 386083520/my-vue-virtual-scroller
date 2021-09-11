@@ -198,6 +198,7 @@
                         views.clear()
                         unusedViews.clear()
                         for (let i = 0, l = pool.length; i < l; i++) {
+                            // TODO
                         }
                     }
                     this.$_continuous = continuous
@@ -220,6 +221,7 @@
                 }
                 const unusedIndex = continuous ? null : new Map()
                 let item, type, unusedPool
+                let v
                 for (let i = startIndex; i < endIndex; i++) {
                     item = items[i]
                     const key = keyField ? item[keyField] : item
@@ -229,6 +231,7 @@
                     view = views.get(key)
                     if (!view) {
                         type = item[typeField]
+                        console.log('gsd!view', unusedViews, unusedPool)
                         unusedPool = unusedViews.get(type)
                         if (continuous) {
                             if (unusedPool && unusedPool.length) {
@@ -244,7 +247,22 @@
                                 console.log('gsdview', view)
                             }
                         } else {
-                            // TODO
+                            v = unusedIndex.get(type) || 0
+                            if (!unusedPool || v >= unusedPool.length) {
+                                view = this.addView(pool, i, item, key, type)
+                                this.unuseView(view, true)
+                                unusedPool = unusedViews.get(type)
+                            }
+                            view = unusedPool[v]
+                            view.item = item
+                            view.nr.used = true
+                            view.nr.index = i
+                            view.nr.key = key
+                            view.nr.type = type
+                            unusedIndex.set(type, v + 1)
+                            v++
+                            console.log('gsdv', v, view)
+                            console.log('gsdunusedPool3', unusedPool)
                         }
                         views.set(key, view)
                         console.log('gsdviews', views)
@@ -259,9 +277,10 @@
                         console.log('gsdposition', i, itemSize)
                     }
                 }
+                console.log('gsdpool', pool)
+                console.log('gsdviews', views)
                 this.$_startIndex = startIndex
                 this.$_endIndex = endIndex
-                console.log('gsdpool', pool)
                 if (this.emitUpdate) this.$emit('update', startIndex, endIndex)
                 clearTimeout(this.$_sortTimer)
                 this.$_sortTimer = setTimeout(this.sortViews, 300)

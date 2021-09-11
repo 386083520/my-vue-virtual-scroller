@@ -1,13 +1,12 @@
 <template>
     <RecycleScroller
             class="scroller"
-            :itemSize="400"
-            :buffer="800"
+            :itemSize="50"
+            :buffer="100"
             :items="list">
         <template v-slot:default="props">
             <div>
-                <!--{{props.item.name}}-->
-                <img :src="props.item.url">
+                {{props.item.name}}
             </div>
         </template>
     </RecycleScroller>
@@ -15,7 +14,7 @@
 
 <script>
     let listTemp = []
-    for (let i = 0; i < 200000; i++) {
+    for (let i = 0; i < 200; i++) {
         listTemp.push({name: 'gsd' + i, id: i, url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()})
     }
     export default {
