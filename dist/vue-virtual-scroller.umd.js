@@ -489,10 +489,6 @@
           this.updateVisibleItems(true);
           this.ready = true;
         });
-
-        for (let i = 0; i < 1000; i++) {
-          this.handleScroll();
-        }
       },
 
       methods: {
@@ -500,10 +496,11 @@
           console.log('gsdhandleScroll');
 
           if (!this.$_scrollDirty) {
-            // this.$_scrollDirty = true
+            this.$_scrollDirty = true;
             requestAnimationFrame(() => {
               this.$_scrollDirty = false;
               console.log('gsdrequestAnimationFrame');
+              this.updateVisibleItems(false, true);
             });
           }
         },
@@ -546,6 +543,27 @@
           return view;
         },
 
+        unuseView(view, fake = false) {
+          const unusedViews = this.$_unusedViews;
+          const type = view.nr.type;
+          let unusedPool = unusedViews.get(type);
+
+          if (!unusedPool) {
+            unusedPool = [];
+            unusedViews.set(type, unusedPool);
+          }
+
+          unusedPool.push(view);
+
+          if (!fake) {
+            view.nr.used = false;
+            view.position = -9999;
+            this.$_views.delete(view.nr.key);
+          }
+
+          console.log('gsdunusedPool', unusedPool);
+        },
+
         updateVisibleItems(checkItem, checkPositionDiff = false) {
           const views = this.$_views;
           const unusedViews = this.$_unusedViews;
@@ -570,10 +588,8 @@
             scroll.end += buffer; // 900 -> 1100
 
             if (itemSize === null) ; else {
-              startIndex = ~~(scroll.start / itemSize); // 310/50 -> 6
-
-              endIndex = Math.ceil(scroll.end / itemSize); // 1020/50 -> 21
-
+              startIndex = ~~(scroll.start / itemSize);
+              endIndex = Math.ceil(scroll.end / itemSize);
               startIndex < 0 && (startIndex = 0);
               endIndex > count && (endIndex = count);
               totalSize = count * itemSize;
@@ -607,7 +623,10 @@
 
               if (view.nr.used) {
 
-                if (view.nr.index === -1 || view.nr.index < startIndex || view.nr.index >= endIndex) ;
+                if (view.nr.index === -1 || view.nr.index < startIndex || view.nr.index >= endIndex) {
+                  this.unuseView(view);
+                  console.log('gsdunusedViews', unusedViews);
+                }
               }
             }
           }
@@ -628,12 +647,22 @@
               unusedPool = unusedViews.get(type);
 
               if (continuous) {
-                if (unusedPool && unusedPool.length) ; else {
+                if (unusedPool && unusedPool.length) {
+                  console.log('gsdunusedPool2', unusedPool);
+                  view = unusedPool.pop();
+                  view.item = item;
+                  view.nr.used = true;
+                  view.nr.index = i;
+                  view.nr.key = key;
+                  view.nr.type = type;
+                } else {
                   view = this.addView(pool, i, item, key, type);
+                  console.log('gsdview', view);
                 }
               }
 
               views.set(key, view);
+              console.log('gsdviews', views);
             } else {
               view.nr.used = true;
               view.item = item;
@@ -641,6 +670,7 @@
 
             if (itemSize === null) ; else {
               view.position = i * itemSize;
+              console.log('gsdposition', i, itemSize);
             }
           }
 
@@ -648,6 +678,8 @@
           this.$_endIndex = endIndex;
           console.log('gsdpool', pool);
           if (this.emitUpdate) this.$emit('update', startIndex, endIndex);
+          clearTimeout(this.$_sortTimer);
+          this.$_sortTimer = setTimeout(this.sortViews, 300);
           return {
             continuous
           };
@@ -671,6 +703,11 @@
           };
           console.log('gsdscrollState', scrollState);
           return scrollState;
+        },
+
+        sortViews() {
+          this.pool.sort((viewA, viewB) => viewA.nr.index - viewB.nr.index);
+          console.log('gsdpool2', this.pool);
         }
 
       }
@@ -826,7 +863,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-3a6a91af";
+      const __vue_scope_id__ = "data-v-30f58579";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
