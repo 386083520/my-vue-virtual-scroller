@@ -2,7 +2,8 @@
     <div
             class="vue-recycle-scroller"
             :class="{ready: 'ready'}"
-            v-observe-visibility="handleVisibilityChange">
+            v-observe-visibility="handleVisibilityChange"
+            @scroll.passive="handleScroll">
         <div class="vue-recycle-scroller__slot">
             <slot
                     name="before"
@@ -77,6 +78,7 @@
             this.$_endIndex = 0
             this.$_views = new Map()
             this.$_unusedViews = new Map()
+            this.$_scrollDirty = false
         },
         mounted () {
             this.$nextTick(() => {
@@ -85,6 +87,16 @@
             })
         },
         methods: {
+            handleScroll (event) {
+                console.log('gsdhandleScroll')
+                if (!this.$_scrollDirty) {
+                    this.$_scrollDirty = true
+                    requestAnimationFrame(() => {
+                        this.$_scrollDirty = false
+                        console.log('gsdrequestAnimationFrame')
+                    })
+                }
+            },
             handleResize: function handleResize() {
                 console.log('gsdhandleResize')
             },
@@ -248,6 +260,7 @@
 <style scoped>
 .vue-recycle-scroller{
     position: relative;
+    overflow-y: auto;
 }
 
 .vue-recycle-scroller.ready .vue-recycle-scroller__item-view {

@@ -436,6 +436,7 @@
     }
 
     //
+    let uid = 0;
     var script = {
       name: "RecycleScroller",
       components: {
@@ -480,6 +481,7 @@
         this.$_endIndex = 0;
         this.$_views = new Map();
         this.$_unusedViews = new Map();
+        this.$_scrollDirty = false;
       },
 
       mounted() {
@@ -487,14 +489,41 @@
           this.updateVisibleItems(true);
           this.ready = true;
         });
+
+        for (let i = 0; i < 1000; i++) {
+          this.handleScroll();
+        }
       },
 
       methods: {
+        handleScroll(event) {
+          console.log('gsdhandleScroll');
+
+          if (!this.$_scrollDirty) {
+            // this.$_scrollDirty = true
+            requestAnimationFrame(() => {
+              this.$_scrollDirty = false;
+              console.log('gsdrequestAnimationFrame');
+            });
+          }
+        },
+
         handleResize: function handleResize() {
           console.log('gsdhandleResize');
         },
         handleVisibilityChange: function handleVisibilityChange(isVisible, entry) {
           console.log('gsdhandleVisibilityChange', isVisible, entry);
+
+          if (this.ready) {
+            if (isVisible) {
+              this.$emit('visible');
+              requestAnimationFrame(() => {
+                this.updateVisibleItems(false);
+              });
+            } else {
+              this.$emit('hidden');
+            }
+          }
         },
 
         addView(pool, index, item, key, type) {
@@ -502,6 +531,17 @@
             item,
             position: 0
           };
+          const nonReactive = {
+            id: uid++,
+            index,
+            used: true,
+            key,
+            type
+          };
+          Object.defineProperty(view, 'nr', {
+            configurable: false,
+            value: nonReactive
+          });
           pool.push(view);
           return view;
         },
@@ -561,6 +601,15 @@
             }
 
             this.$_continuous = continuous;
+          } else if (continuous) {
+            for (let i = 0, l = pool.length; i < l; i++) {
+              view = pool[i];
+
+              if (view.nr.used) {
+
+                if (view.nr.index === -1 || view.nr.index < startIndex || view.nr.index >= endIndex) ;
+              }
+            }
           }
           let item, type, unusedPool;
 
@@ -585,6 +634,9 @@
               }
 
               views.set(key, view);
+            } else {
+              view.nr.used = true;
+              view.item = item;
             }
 
             if (itemSize === null) ; else {
@@ -718,7 +770,12 @@
             }
           ],
           staticClass: "vue-recycle-scroller",
-          class: { ready: "ready" }
+          class: { ready: "ready" },
+          on: {
+            "&scroll": function($event) {
+              return _vm.handleScroll.apply(null, arguments)
+            }
+          }
         },
         [
           _c(
@@ -734,11 +791,11 @@
               staticClass: "vue-recycle-scroller__item-wrapper",
               style: { minHeight: _vm.totalSize + "px" }
             },
-            _vm._l(_vm.pool, function(view, index) {
+            _vm._l(_vm.pool, function(view) {
               return _c(
                 "div",
                 {
-                  key: index,
+                  key: view.nr.id,
                   staticClass: "vue-recycle-scroller__item-view",
                   style: _vm.ready
                     ? { transform: "translateY(" + view.position + "px)" }
@@ -769,7 +826,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-45072606";
+      const __vue_scope_id__ = "data-v-3a6a91af";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
