@@ -22,9 +22,428 @@
       itemsLimit: 1000
     };
 
+    function getInternetExplorerVersion() {
+    	var ua = window.navigator.userAgent;
+
+    	var msie = ua.indexOf('MSIE ');
+    	if (msie > 0) {
+    		// IE 10 or older => return version number
+    		return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    	}
+
+    	var trident = ua.indexOf('Trident/');
+    	if (trident > 0) {
+    		// IE 11 => return version number
+    		var rv = ua.indexOf('rv:');
+    		return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    	}
+
+    	var edge = ua.indexOf('Edge/');
+    	if (edge > 0) {
+    		// Edge (IE 12+) => return version number
+    		return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    	}
+
+    	// other browser
+    	return -1;
+    }
+
+    var isIE = void 0;
+
+    function initCompat() {
+    	if (!initCompat.init) {
+    		initCompat.init = true;
+    		isIE = getInternetExplorerVersion() !== -1;
+    	}
+    }
+
+    var ResizeObserver = { render: function render() {
+    		var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "resize-observer", attrs: { "tabindex": "-1" } });
+    	}, staticRenderFns: [], _scopeId: 'data-v-b329ee4c',
+    	name: 'resize-observer',
+
+    	methods: {
+    		compareAndNotify: function compareAndNotify() {
+    			if (this._w !== this.$el.offsetWidth || this._h !== this.$el.offsetHeight) {
+    				this._w = this.$el.offsetWidth;
+    				this._h = this.$el.offsetHeight;
+    				this.$emit('notify');
+    			}
+    		},
+    		addResizeHandlers: function addResizeHandlers() {
+    			this._resizeObject.contentDocument.defaultView.addEventListener('resize', this.compareAndNotify);
+    			this.compareAndNotify();
+    		},
+    		removeResizeHandlers: function removeResizeHandlers() {
+    			if (this._resizeObject && this._resizeObject.onload) {
+    				if (!isIE && this._resizeObject.contentDocument) {
+    					this._resizeObject.contentDocument.defaultView.removeEventListener('resize', this.compareAndNotify);
+    				}
+    				delete this._resizeObject.onload;
+    			}
+    		}
+    	},
+
+    	mounted: function mounted() {
+    		var _this = this;
+
+    		initCompat();
+    		this.$nextTick(function () {
+    			_this._w = _this.$el.offsetWidth;
+    			_this._h = _this.$el.offsetHeight;
+    		});
+    		var object = document.createElement('object');
+    		this._resizeObject = object;
+    		object.setAttribute('aria-hidden', 'true');
+    		object.setAttribute('tabindex', -1);
+    		object.onload = this.addResizeHandlers;
+    		object.type = 'text/html';
+    		if (isIE) {
+    			this.$el.appendChild(object);
+    		}
+    		object.data = 'about:blank';
+    		if (!isIE) {
+    			this.$el.appendChild(object);
+    		}
+    	},
+    	beforeDestroy: function beforeDestroy() {
+    		this.removeResizeHandlers();
+    	}
+    };
+
+    // Install the components
+    function install$1(Vue) {
+    	Vue.component('resize-observer', ResizeObserver);
+    	Vue.component('ResizeObserver', ResizeObserver);
+    }
+
+    // Plugin
+    var plugin$2 = {
+    	// eslint-disable-next-line no-undef
+    	version: "0.4.5",
+    	install: install$1
+    };
+
+    // Auto-install
+    var GlobalVue$1 = null;
+    if (typeof window !== 'undefined') {
+    	GlobalVue$1 = window.Vue;
+    } else if (typeof global !== 'undefined') {
+    	GlobalVue$1 = global.Vue;
+    }
+    if (GlobalVue$1) {
+    	GlobalVue$1.use(plugin$2);
+    }
+
+    function _typeof(obj) {
+      if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+        _typeof = function (obj) {
+          return typeof obj;
+        };
+      } else {
+        _typeof = function (obj) {
+          return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        };
+      }
+
+      return _typeof(obj);
+    }
+
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
+      return Constructor;
+    }
+
+    function _toConsumableArray(arr) {
+      return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+    }
+
+    function _arrayWithoutHoles(arr) {
+      if (Array.isArray(arr)) {
+        for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+        return arr2;
+      }
+    }
+
+    function _iterableToArray(iter) {
+      if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    }
+
+    function _nonIterableSpread() {
+      throw new TypeError("Invalid attempt to spread non-iterable instance");
+    }
+
+    function processOptions(value) {
+      var options;
+
+      if (typeof value === 'function') {
+        // Simple options (callback-only)
+        options = {
+          callback: value
+        };
+      } else {
+        // Options object
+        options = value;
+      }
+
+      return options;
+    }
+    function throttle(callback, delay) {
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var timeout;
+      var lastState;
+      var currentArgs;
+
+      var throttled = function throttled(state) {
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        currentArgs = args;
+        if (timeout && state === lastState) return;
+        var leading = options.leading;
+
+        if (typeof leading === 'function') {
+          leading = leading(state, lastState);
+        }
+
+        if ((!timeout || state !== lastState) && leading) {
+          callback.apply(void 0, [state].concat(_toConsumableArray(currentArgs)));
+        }
+
+        lastState = state;
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+          callback.apply(void 0, [state].concat(_toConsumableArray(currentArgs)));
+          timeout = 0;
+        }, delay);
+      };
+
+      throttled._clear = function () {
+        clearTimeout(timeout);
+        timeout = null;
+      };
+
+      return throttled;
+    }
+    function deepEqual(val1, val2) {
+      if (val1 === val2) return true;
+
+      if (_typeof(val1) === 'object') {
+        for (var key in val1) {
+          if (!deepEqual(val1[key], val2[key])) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+
+    var VisibilityState =
+    /*#__PURE__*/
+    function () {
+      function VisibilityState(el, options, vnode) {
+        _classCallCheck(this, VisibilityState);
+
+        this.el = el;
+        this.observer = null;
+        this.frozen = false;
+        this.createObserver(options, vnode);
+      }
+
+      _createClass(VisibilityState, [{
+        key: "createObserver",
+        value: function createObserver(options, vnode) {
+          var _this = this;
+
+          if (this.observer) {
+            this.destroyObserver();
+          }
+
+          if (this.frozen) return;
+          this.options = processOptions(options);
+
+          this.callback = function (result, entry) {
+            _this.options.callback(result, entry);
+
+            if (result && _this.options.once) {
+              _this.frozen = true;
+
+              _this.destroyObserver();
+            }
+          }; // Throttle
+
+
+          if (this.callback && this.options.throttle) {
+            var _ref = this.options.throttleOptions || {},
+                _leading = _ref.leading;
+
+            this.callback = throttle(this.callback, this.options.throttle, {
+              leading: function leading(state) {
+                return _leading === 'both' || _leading === 'visible' && state || _leading === 'hidden' && !state;
+              }
+            });
+          }
+
+          this.oldResult = undefined;
+          this.observer = new IntersectionObserver(function (entries) {
+            var entry = entries[0];
+
+            if (entries.length > 1) {
+              var intersectingEntry = entries.find(function (e) {
+                return e.isIntersecting;
+              });
+
+              if (intersectingEntry) {
+                entry = intersectingEntry;
+              }
+            }
+
+            if (_this.callback) {
+              // Use isIntersecting if possible because browsers can report isIntersecting as true, but intersectionRatio as 0, when something very slowly enters the viewport.
+              var result = entry.isIntersecting && entry.intersectionRatio >= _this.threshold;
+              if (result === _this.oldResult) return;
+              _this.oldResult = result;
+
+              _this.callback(result, entry);
+            }
+          }, this.options.intersection); // Wait for the element to be in document
+
+          vnode.context.$nextTick(function () {
+            if (_this.observer) {
+              _this.observer.observe(_this.el);
+            }
+          });
+        }
+      }, {
+        key: "destroyObserver",
+        value: function destroyObserver() {
+          if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+          } // Cancel throttled call
+
+
+          if (this.callback && this.callback._clear) {
+            this.callback._clear();
+
+            this.callback = null;
+          }
+        }
+      }, {
+        key: "threshold",
+        get: function get() {
+          return this.options.intersection && this.options.intersection.threshold || 0;
+        }
+      }]);
+
+      return VisibilityState;
+    }();
+
+    function bind(el, _ref2, vnode) {
+      var value = _ref2.value;
+      if (!value) return;
+
+      if (typeof IntersectionObserver === 'undefined') {
+        console.warn('[vue-observe-visibility] IntersectionObserver API is not available in your browser. Please install this polyfill: https://github.com/w3c/IntersectionObserver/tree/master/polyfill');
+      } else {
+        var state = new VisibilityState(el, value, vnode);
+        el._vue_visibilityState = state;
+      }
+    }
+
+    function update(el, _ref3, vnode) {
+      var value = _ref3.value,
+          oldValue = _ref3.oldValue;
+      if (deepEqual(value, oldValue)) return;
+      var state = el._vue_visibilityState;
+
+      if (!value) {
+        unbind(el);
+        return;
+      }
+
+      if (state) {
+        state.createObserver(value, vnode);
+      } else {
+        bind(el, {
+          value: value
+        }, vnode);
+      }
+    }
+
+    function unbind(el) {
+      var state = el._vue_visibilityState;
+
+      if (state) {
+        state.destroyObserver();
+        delete el._vue_visibilityState;
+      }
+    }
+
+    var ObserveVisibility = {
+      bind: bind,
+      update: update,
+      unbind: unbind
+    };
+
+    function install(Vue) {
+      Vue.directive('observe-visibility', ObserveVisibility);
+      /* -- Add more components here -- */
+    }
+    /* -- Plugin definition & Auto-install -- */
+
+    /* You shouldn't have to modify the code below */
+    // Plugin
+
+    var plugin$1 = {
+      // eslint-disable-next-line no-undef
+      version: "0.4.6",
+      install: install
+    };
+
+    var GlobalVue = null;
+
+    if (typeof window !== 'undefined') {
+      GlobalVue = window.Vue;
+    } else if (typeof global !== 'undefined') {
+      GlobalVue = global.Vue;
+    }
+
+    if (GlobalVue) {
+      GlobalVue.use(plugin$1);
+    }
+
     //
     var script = {
       name: "RecycleScroller",
+      components: {
+        ResizeObserver
+      },
+      directives: {
+        ObserveVisibility
+      },
       props: { ...props,
         buffer: {
           type: Number,
@@ -75,7 +494,7 @@
           console.log('gsdhandleResize');
         },
         handleVisibilityChange: function handleVisibilityChange(isVisible, entry) {
-          console.log('gsdhandleVisibilityChange');
+          console.log('gsdhandleVisibilityChange', isVisible, entry);
         },
 
         addView(pool, index, item, key, type) {
@@ -289,7 +708,18 @@
       var _c = _vm._self._c || _h;
       return _c(
         "div",
-        { staticClass: "vue-recycle-scroller", class: { ready: "ready" } },
+        {
+          directives: [
+            {
+              name: "observe-visibility",
+              rawName: "v-observe-visibility",
+              value: _vm.handleVisibilityChange,
+              expression: "handleVisibilityChange"
+            }
+          ],
+          staticClass: "vue-recycle-scroller",
+          class: { ready: "ready" }
+        },
         [
           _c(
             "div",
@@ -326,8 +756,11 @@
             { staticClass: "vue-recycle-scroller__slot" },
             [_vm._t("after")],
             2
-          )
-        ]
+          ),
+          _vm._v(" "),
+          _c("ResizeObserver", { on: { notify: _vm.handleResize } })
+        ],
+        1
       )
     };
     var __vue_staticRenderFns__ = [];
@@ -336,7 +769,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-bb2a3078";
+      const __vue_scope_id__ = "data-v-45072606";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */

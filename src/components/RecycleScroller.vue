@@ -1,7 +1,8 @@
 <template>
     <div
             class="vue-recycle-scroller"
-            :class="{ready: 'ready'}">
+            :class="{ready: 'ready'}"
+            v-observe-visibility="handleVisibilityChange">
         <div class="vue-recycle-scroller__slot">
             <slot
                     name="before"
@@ -11,8 +12,8 @@
                 :style="{'minHeight': totalSize + 'px' }"
                 class="vue-recycle-scroller__item-wrapper">
             <div
-                v-for="(view, index) of pool"
-                :key="index"
+                v-for="view of pool"
+                :key="view.nr.id"
                 :style="ready ? { transform: `translateY(${view.position}px)` } : null"
                 class="vue-recycle-scroller__item-view">
                 <slot :item="view.item"></slot>
@@ -23,14 +24,25 @@
                     name="after"
             />
         </div>
+        <ResizeObserver @notify="handleResize" />
     </div>
 </template>
 
 <script>
     import {props, simpleArray} from "./common";
     import config from '../config'
+    import { ResizeObserver } from 'vue-resize'
+    import { ObserveVisibility } from 'vue-observe-visibility'
+
+    let uid = 0
     export default {
         name: "RecycleScroller",
+        components: {
+            ResizeObserver,
+        },
+        directives: {
+            ObserveVisibility,
+        },
         props: {
             ...props,
             buffer: {
@@ -77,13 +89,34 @@
                 console.log('gsdhandleResize')
             },
             handleVisibilityChange: function handleVisibilityChange(isVisible, entry) {
-                console.log('gsdhandleVisibilityChange')
+                console.log('gsdhandleVisibilityChange',isVisible, entry)
+                if(this.ready) {
+                    if (isVisible) {
+                        this.$emit('visible')
+                        requestAnimationFrame(() => {
+                            this.updateVisibleItems(false)
+                        })
+                    }else {
+                        this.$emit('hidden')
+                    }
+                }
             },
             addView (pool, index, item, key, type) {
                 const view = {
                     item,
                     position: 0,
                 }
+                const nonReactive = {
+                    id: uid++,
+                    index,
+                    used: true,
+                    key,
+                    type,
+                }
+                Object.defineProperty(view, 'nr', {
+                    configurable: false,
+                    value: nonReactive,
+                })
                 pool.push(view)
                 return view
             },
@@ -139,7 +172,20 @@
                     }
                     this.$_continuous = continuous
                 } else if (continuous) {
-
+                    for (let i = 0, l = pool.length; i < l; i++) {
+                        view = pool[i]
+                        if (view.nr.used) {
+                            if (checkItem) {
+                            }
+                            if (
+                                view.nr.index === -1 ||
+                                view.nr.index < startIndex ||
+                                view.nr.index >= endIndex
+                            ) {
+                                // TODO
+                            }
+                        }
+                    }
                 }
                 const unusedIndex = continuous ? null : new Map()
                 let item, type, unusedPool
@@ -160,9 +206,12 @@
                                 view = this.addView(pool, i, item, key, type)
                             }
                         } else {
+                            // TODO
                         }
                         views.set(key, view)
                     } else {
+                        view.nr.used = true
+                        view.item = item
                     }
                     if (itemSize === null) {
 
