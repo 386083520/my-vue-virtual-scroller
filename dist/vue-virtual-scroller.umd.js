@@ -47,7 +47,8 @@
       data() {
         return {
           pool: [],
-          totalSize: 0
+          totalSize: 0,
+          ready: false
         };
       },
 
@@ -65,10 +66,18 @@
       mounted() {
         this.$nextTick(() => {
           this.updateVisibleItems(true);
+          this.ready = true;
         });
       },
 
       methods: {
+        handleResize: function handleResize() {
+          console.log('gsdhandleResize');
+        },
+        handleVisibilityChange: function handleVisibilityChange(isVisible, entry) {
+          console.log('gsdhandleVisibilityChange');
+        },
+
         addView(pool, index, item, key, type) {
           const view = {
             item,
@@ -277,35 +286,48 @@
       var _vm = this;
       var _h = _vm.$createElement;
       var _c = _vm._self._c || _h;
-      return _c("div", { staticClass: "vue-recycle-scroller" }, [
-        _c(
-          "div",
-          { staticClass: "vue-recycle-scroller__slot" },
-          [_vm._t("before")],
-          2
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "vue-recycle-scroller__item-wrapper" },
-          _vm._l(_vm.pool, function(view, index) {
-            return _c(
-              "div",
-              { key: index, staticClass: "vue-recycle-scroller__item-view" },
-              [_vm._t("default", null, { item: view.item })],
-              2
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "vue-recycle-scroller__slot" },
-          [_vm._t("after")],
-          2
-        )
-      ])
+      return _c(
+        "div",
+        { staticClass: "vue-recycle-scroller", class: { ready: "ready" } },
+        [
+          _c(
+            "div",
+            { staticClass: "vue-recycle-scroller__slot" },
+            [_vm._t("before")],
+            2
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "vue-recycle-scroller__item-wrapper",
+              style: { minHeight: _vm.totalSize + "px" }
+            },
+            _vm._l(_vm.pool, function(view, index) {
+              return _c(
+                "div",
+                {
+                  key: index,
+                  staticClass: "vue-recycle-scroller__item-view",
+                  style: _vm.ready
+                    ? { transform: "translateY(" + view.position + "px)" }
+                    : null
+                },
+                [_vm._t("default", null, { item: view.item })],
+                2
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "vue-recycle-scroller__slot" },
+            [_vm._t("after")],
+            2
+          )
+        ]
+      )
     };
     var __vue_staticRenderFns__ = [];
     __vue_render__._withStripped = true;
@@ -313,7 +335,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-83ca2248";
+      const __vue_scope_id__ = "data-v-998ba808";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */

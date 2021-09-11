@@ -1,14 +1,19 @@
 <template>
-    <div class="vue-recycle-scroller">
+    <div
+            class="vue-recycle-scroller"
+            :class="{ready: 'ready'}">
         <div class="vue-recycle-scroller__slot">
             <slot
                     name="before"
             />
         </div>
-        <div class="vue-recycle-scroller__item-wrapper">
+        <div
+                :style="{'minHeight': totalSize + 'px' }"
+                class="vue-recycle-scroller__item-wrapper">
             <div
                 v-for="(view, index) of pool"
                 :key="index"
+                :style="ready ? { transform: `translateY(${view.position}px)` } : null"
                 class="vue-recycle-scroller__item-view">
                 <slot :item="view.item"></slot>
             </div>
@@ -48,7 +53,8 @@
         data() {
             return {
                 pool: [],
-                totalSize: 0
+                totalSize: 0,
+                ready: false
             }
         },
         computed: {
@@ -63,9 +69,16 @@
         mounted () {
             this.$nextTick(() => {
                 this.updateVisibleItems(true)
+                this.ready = true
             })
         },
         methods: {
+            handleResize: function handleResize() {
+                console.log('gsdhandleResize')
+            },
+            handleVisibilityChange: function handleVisibilityChange(isVisible, entry) {
+                console.log('gsdhandleVisibilityChange')
+            },
             addView (pool, index, item, key, type) {
                 const view = {
                     item,
