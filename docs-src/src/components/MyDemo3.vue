@@ -1,17 +1,13 @@
 <template>
     <RecycleScroller
+            class="scroller"
             :itemSize="50"
+            :buffer="100"
             :items="list">
-        <template v-slot:before>
-            <p>666</p>
-        </template>
         <template v-slot:default="props">
             <div>
                 {{props.item.name}}
             </div>
-        </template>
-        <template v-slot:after>
-            <p>8888</p>
         </template>
     </RecycleScroller>
 </template>

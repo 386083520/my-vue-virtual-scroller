@@ -182,6 +182,7 @@
                 throw new Error('Rendered items limit reached')
             },
             getScroll () {
+                console.log('gsdthis', this)
                 const { $el: el } = this
                 let scrollState
                 scrollState = {
@@ -196,5 +197,14 @@
 </script>
 
 <style scoped>
+.vue-recycle-scroller{
+    position: relative;
+}
 
+.vue-recycle-scroller.ready .vue-recycle-scroller__item-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+}
 </style>

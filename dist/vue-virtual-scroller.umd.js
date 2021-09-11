@@ -187,6 +187,7 @@
         },
 
         getScroll() {
+          console.log('gsdthis', this);
           const {
             $el: el
           } = this;
@@ -335,7 +336,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-998ba808";
+      const __vue_scope_id__ = "data-v-bb2a3078";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
@@ -385,4 +386,3 @@
     Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=vue-virtual-scroller.umd.js.map
