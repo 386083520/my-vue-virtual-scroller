@@ -191,6 +191,7 @@
 
                 let view
                 const continuous = startIndex <= this.$_endIndex && endIndex >= this.$_startIndex
+                console.log('gsdcontinuous', continuous)
                 if (this.$_continuous !== continuous) {
                     console.log('gsdcontinuous',this.$_continuous, continuous)
                     if (continuous) {

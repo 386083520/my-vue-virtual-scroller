@@ -605,6 +605,7 @@
           this.totalSize = totalSize;
           let view;
           const continuous = startIndex <= this.$_endIndex && endIndex >= this.$_startIndex;
+          console.log('gsdcontinuous', continuous);
 
           if (this.$_continuous !== continuous) {
             console.log('gsdcontinuous', this.$_continuous, continuous);
@@ -863,7 +864,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-30f58579";
+      const __vue_scope_id__ = "data-v-22feadf0";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
