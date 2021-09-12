@@ -199,6 +199,8 @@
                         unusedViews.clear()
                         for (let i = 0, l = pool.length; i < l; i++) {
                             // TODO
+                            view = pool[i]
+                            this.unuseView(view)
                         }
                     }
                     this.$_continuous = continuous

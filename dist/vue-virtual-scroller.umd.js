@@ -614,7 +614,10 @@
               views.clear();
               unusedViews.clear();
 
-              for (let i = 0, l = pool.length; i < l; i++) {// TODO
+              for (let i = 0, l = pool.length; i < l; i++) {
+                // TODO
+                view = pool[i];
+                this.unuseView(view);
               }
             }
 
@@ -889,7 +892,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-be33231c";
+      const __vue_scope_id__ = "data-v-23d81220";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
