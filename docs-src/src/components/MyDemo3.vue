@@ -1,7 +1,7 @@
 <template>
     <RecycleScroller
             class="scroller"
-            :itemSize="50"
+            :itemSize="500"
             :buffer="100"
             :items="list">
         <template v-slot:default="props">

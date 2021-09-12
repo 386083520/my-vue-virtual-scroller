@@ -165,8 +165,15 @@
                 } else {
                     const scroll = this.getScroll()
                     if (checkPositionDiff) {
-
+                        let positionDiff = scroll.start - this.$_lastUpdateScrollPosition
+                        if (positionDiff < 0) positionDiff = -positionDiff
+                        if (positionDiff < itemSize) {
+                            return {
+                                continuous: true,
+                            }
+                        }
                     }
+                    console.log('gsdcheckPositionDiff')
                     this.$_lastUpdateScrollPosition = scroll.start
                     const buffer = this.buffer
                     scroll.start -= buffer  // 300 -> 100

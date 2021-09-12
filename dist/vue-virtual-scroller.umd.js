@@ -581,6 +581,18 @@
           } else {
             const scroll = this.getScroll();
 
+            if (checkPositionDiff) {
+              let positionDiff = scroll.start - this.$_lastUpdateScrollPosition;
+              if (positionDiff < 0) positionDiff = -positionDiff;
+
+              if (positionDiff < itemSize) {
+                return {
+                  continuous: true
+                };
+              }
+            }
+
+            console.log('gsdcheckPositionDiff');
             this.$_lastUpdateScrollPosition = scroll.start;
             const buffer = this.buffer;
             scroll.start -= buffer; // 300 -> 100
@@ -892,7 +904,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-23d81220";
+      const __vue_scope_id__ = "data-v-d5881564";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
