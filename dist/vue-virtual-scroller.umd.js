@@ -461,6 +461,14 @@
         emitUpdate: {
           type: Boolean,
           default: false
+        },
+        sizeField: {
+          type: String,
+          default: 'size'
+        },
+        minItemSize: {
+          type: [Number, String],
+          default: null
         }
       },
 
@@ -473,7 +481,37 @@
       },
 
       computed: {
-        simpleArray
+        simpleArray,
+
+        sizes() {
+          if (this.itemSize === null) {
+            const sizes = {
+              '-1': {
+                accumulator: 0
+              }
+            };
+            const items = this.items;
+            const field = this.sizeField;
+            const minItemSize = this.minItemSize;
+            let current;
+            let accumulator = 0;
+
+            for (let i = 0, l = items.length; i < l; i++) {
+              current = items[i][field] || minItemSize;
+
+              accumulator += current;
+              sizes[i] = {
+                accumulator,
+                size: current
+              };
+            }
+
+            return sizes;
+          }
+
+          return [];
+        }
+
       },
 
       created() {
@@ -575,6 +613,7 @@
           let startIndex, endIndex;
           let totalSize;
           const typeField = this.typeField;
+          const sizes = this.sizes;
 
           if (!count) {
             startIndex = endIndex = totalSize = 0;
@@ -599,7 +638,40 @@
 
             scroll.end += buffer; // 900 -> 1100
 
-            if (itemSize === null) ; else {
+            if (itemSize === null) {
+              let i = ~~(count / 2);
+              let oldI;
+              let h;
+              let a = 0;
+              let b = count - 1;
+
+              do {
+                oldI = i;
+                h = sizes[i].accumulator;
+
+                if (h < scroll.start) {
+                  a = i;
+                } else if (i < count - 1 && sizes[i + 1].accumulator > scroll.start) {
+                  b = i;
+                }
+
+                i = ~~((a + b) / 2);
+              } while (i !== oldI);
+
+              i < 0 && (i = 0);
+              startIndex = i;
+              totalSize = sizes[count - 1].accumulator;
+
+              for (endIndex = i; endIndex < count && sizes[endIndex].accumulator < scroll.end; endIndex++) {
+                if (endIndex === -1) {
+                  endIndex = items.length - 1;
+                } else {
+                  endIndex++; // Bounds
+
+                  endIndex > count && (endIndex = count);
+                }
+              }
+            } else {
               startIndex = ~~(scroll.start / itemSize);
               endIndex = Math.ceil(scroll.end / itemSize);
               startIndex < 0 && (startIndex = 0);
@@ -708,7 +780,9 @@
               view.item = item;
             }
 
-            if (itemSize === null) ; else {
+            if (itemSize === null) {
+              view.position = sizes[i - 1].accumulator;
+            } else {
               view.position = i * itemSize;
               console.log('gsdposition', i, itemSize);
             }
@@ -904,7 +978,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-d5881564";
+      const __vue_scope_id__ = "data-v-3941b9df";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
