@@ -17,7 +17,11 @@
                 :key="view.nr.id"
                 :style="ready ? { transform: `translateY(${view.position}px)` } : null"
                 class="vue-recycle-scroller__item-view">
-                <slot :item="view.item"></slot>
+                <slot
+                    :item="view.item"
+                    :index="view.nr.index"
+                    :active="view.nr.used">
+                </slot>
             </div>
         </div>
         <div class="vue-recycle-scroller__slot">

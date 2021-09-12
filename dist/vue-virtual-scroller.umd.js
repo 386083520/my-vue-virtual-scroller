@@ -437,7 +437,7 @@
 
     //
     let uid = 0;
-    var script = {
+    var script$1 = {
       name: "RecycleScroller",
       components: {
         ResizeObserver
@@ -904,9 +904,9 @@
     }
 
     /* script */
-    const __vue_script__ = script;
+    const __vue_script__$1 = script$1;
     /* template */
-    var __vue_render__ = function() {
+    var __vue_render__$1 = function() {
       var _vm = this;
       var _h = _vm.$createElement;
       var _c = _vm._self._c || _h;
@@ -953,7 +953,13 @@
                     ? { transform: "translateY(" + view.position + "px)" }
                     : null
                 },
-                [_vm._t("default", null, { item: view.item })],
+                [
+                  _vm._t("default", null, {
+                    item: view.item,
+                    index: view.nr.index,
+                    active: view.nr.used
+                  })
+                ],
                 2
               )
             }),
@@ -972,13 +978,120 @@
         1
       )
     };
+    var __vue_staticRenderFns__$1 = [];
+    __vue_render__$1._withStripped = true;
+
+      /* style */
+      const __vue_inject_styles__$1 = undefined;
+      /* scoped */
+      const __vue_scope_id__$1 = "data-v-0a3944c4";
+      /* module identifier */
+      const __vue_module_identifier__$1 = undefined;
+      /* functional template */
+      const __vue_is_functional_template__$1 = false;
+      /* style inject */
+      
+      /* style inject SSR */
+      
+      /* style inject shadow dom */
+      
+
+      
+      const __vue_component__$1 = /*#__PURE__*/normalizeComponent(
+        { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
+        __vue_inject_styles__$1,
+        __vue_script__$1,
+        __vue_scope_id__$1,
+        __vue_is_functional_template__$1,
+        __vue_module_identifier__$1,
+        false,
+        undefined,
+        undefined,
+        undefined
+      );
+
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    let listTemp = [];
+
+    for (let i = 0; i < 200000; i++) {
+      listTemp.push({
+        name: 'gsd' + i,
+        id: i,
+        size: 20 + Math.random() * 20,
+        url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()
+      });
+    }
+    var script = {
+      name: "MyDemo2",
+
+      data() {
+        return {
+          list: listTemp
+        };
+      },
+
+      props: { ...props
+      }
+    };
+
+    /* script */
+    const __vue_script__ = script;
+    /* template */
+    var __vue_render__ = function() {
+      var _vm = this;
+      var _h = _vm.$createElement;
+      var _c = _vm._self._c || _h;
+      return _c("RecycleScroller", {
+        staticClass: "scroller",
+        attrs: { buffer: 100, items: _vm.items },
+        scopedSlots: _vm._u(
+          [
+            {
+              key: "default",
+              fn: function(ref) {
+                var itemWithSize = ref.item;
+                var index = ref.index;
+                var active = ref.active;
+                return [
+                  _vm._t("default", null, null, {
+                    item: itemWithSize,
+                    index: index,
+                    active: active,
+                    itemWithSize: itemWithSize
+                  })
+                ]
+              }
+            }
+          ],
+          null,
+          true
+        )
+      })
+    };
     var __vue_staticRenderFns__ = [];
     __vue_render__._withStripped = true;
 
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-3941b9df";
+      const __vue_scope_id__ = "data-v-f54e73c4";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
@@ -1005,8 +1118,10 @@
       );
 
     function registerComponents(Vue, prefix) {
-      Vue.component(`${prefix}recycle-scroller`, __vue_component__);
-      Vue.component(`${prefix}RecycleScroller`, __vue_component__);
+      Vue.component(`${prefix}recycle-scroller`, __vue_component__$1);
+      Vue.component(`${prefix}RecycleScroller`, __vue_component__$1);
+      Vue.component(`${prefix}dynamic-scroller`, __vue_component__);
+      Vue.component(`${prefix}DynamicScroller`, __vue_component__);
     }
 
     const plugin = {

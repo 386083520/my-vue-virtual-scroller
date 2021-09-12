@@ -1,0 +1,30 @@
+<template>
+    <DynamicScroller
+            :items="list"
+            class="scroller">
+        <template v-slot="{ item, index, active }">
+            <div>{{item.name}}</div>
+        </template>
+    </DynamicScroller>
+</template>
+
+<script>
+    let listTemp = []
+    for (let i = 0; i < 200000; i++) {
+        listTemp.push({name: 'gsd' + i, id: i,size: 20 + Math.random()*20, url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()})
+    }
+    export default {
+        name: "MyDemo5",
+        data() {
+            return {
+                list: listTemp
+            }
+        }
+    }
+</script>
+
+<style scoped>
+.scroller{
+    height: 100%;
+}
+</style>
