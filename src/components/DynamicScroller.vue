@@ -21,10 +21,18 @@
     import { props, simpleArray } from './common'
     export default {
         name: "MyDemo2",
+        provide () {
+            return {
+                vscrollData: this.vscrollData
+            }
+        },
         data() {
             return {
                 vscrollData: {
-
+                    sizes: {},
+                    active: true,
+                    keyField: this.keyField,
+                    simpleArray: false
                 }
             }
         },

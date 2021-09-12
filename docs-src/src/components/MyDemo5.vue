@@ -3,7 +3,12 @@
             :items="list"
             class="scroller">
         <template v-slot="{ item, index, active }">
-            <div>{{item.name}}</div>
+            <!--<div>{{item.name}}</div>-->
+            <DynamicScrollerItem
+               :active="active"
+               :item="item">
+                <div>{{item.name}}</div>
+            </DynamicScrollerItem>
         </template>
     </DynamicScroller>
 </template>
