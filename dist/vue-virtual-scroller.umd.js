@@ -1031,7 +1031,11 @@
         };
       },
 
-      props: { ...props
+      props: { ...props,
+        minItemSize: {
+          type: [Number, String],
+          required: true
+        }
       },
       computed: {
         simpleArray,
@@ -1044,12 +1048,13 @@
             simpleArray
           } = this;
           console.log('gsditemsWithSize', keyField, simpleArray);
-          this.vscrollData.sizes;
+          const sizes = this.vscrollData.sizes;
+          console.log('gsdsizes', sizes);
 
           for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const id = simpleArray ? i : item[keyField];
-            let size = 40;
+            let size = sizes[id];
             result.push({
               item,
               id,
@@ -1057,6 +1062,7 @@
             });
           }
 
+          console.log('gsdresult', result);
           return result;
         }
 
@@ -1072,7 +1078,12 @@
       var _c = _vm._self._c || _h;
       return _c("RecycleScroller", {
         staticClass: "scroller",
-        attrs: { buffer: 100, "key-field": "id", items: _vm.itemsWithSize },
+        attrs: {
+          buffer: 100,
+          "key-field": "id",
+          "min-item-size": _vm.minItemSize,
+          items: _vm.itemsWithSize
+        },
         scopedSlots: _vm._u(
           [
             {
@@ -1103,7 +1114,7 @@
       /* style */
       const __vue_inject_styles__$1 = undefined;
       /* scoped */
-      const __vue_scope_id__$1 = "data-v-0170fd1a";
+      const __vue_scope_id__$1 = "data-v-66ff4924";
       /* module identifier */
       const __vue_module_identifier__$1 = undefined;
       /* functional template */
@@ -1164,7 +1175,7 @@
         computeSize(id) {
           this.$nextTick(() => {
             if (this.id === id) {
-              this.applySize('50', '50');
+              this.applySize('50', '350');
             }
           });
         },
@@ -1174,7 +1185,6 @@
 
           if (size && this.size !== size) {
             this.$set(this.vscrollData.sizes, this.id, size);
-            console.log('gsdvscrollData', this.vscrollData);
           }
         }
 

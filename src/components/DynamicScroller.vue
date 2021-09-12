@@ -3,6 +3,7 @@
             class="scroller"
             :buffer="100"
             key-field="id"
+            :min-item-size="minItemSize"
             :items="itemsWithSize">
         <template slot-scope="{ item: itemWithSize, index, active }">
             <slot
@@ -37,7 +38,11 @@
             }
         },
         props: {
-            ...props
+            ...props,
+            minItemSize: {
+                type: [Number, String],
+                required: true,
+            }
         },
         computed: {
             simpleArray,
@@ -46,16 +51,18 @@
                 const { items, keyField, simpleArray } = this
                 console.log('gsditemsWithSize', keyField, simpleArray)
                 const sizes = this.vscrollData.sizes
+                console.log('gsdsizes', sizes)
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i]
                     const id = simpleArray ? i : item[keyField]
-                    let size = 40
+                    let size = sizes[id]
                     result.push({
                         item,
                         id,
                         size,
                     })
                 }
+                console.log('gsdresult', result)
                 return  result
             }
         }

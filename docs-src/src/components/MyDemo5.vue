@@ -1,6 +1,7 @@
 <template>
     <DynamicScroller
             :items="list"
+            :min-item-size="54"
             class="scroller">
         <template v-slot="{ item, index, active }">
             <!--<div>{{item.name}}</div>-->
@@ -15,7 +16,7 @@
 
 <script>
     let listTemp = []
-    for (let i = 0; i < 200000; i++) {
+    for (let i = 0; i < 20000; i++) {
         listTemp.push({name: 'gsd' + i, id: i, url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()})
     }
     export default {

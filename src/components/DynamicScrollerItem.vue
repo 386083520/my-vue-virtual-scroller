@@ -33,7 +33,7 @@
             computeSize (id) {
                 this.$nextTick(() => {
                     if (this.id === id) {
-                        this.applySize('50', '50')
+                        this.applySize('50', '350')
                     }
                 })
             },
@@ -41,7 +41,6 @@
                 const size = Math.round(height)
                 if (size && this.size !== size) {
                     this.$set(this.vscrollData.sizes, this.id, size)
-                    console.log('gsdvscrollData', this.vscrollData)
                 }
             }
         },
