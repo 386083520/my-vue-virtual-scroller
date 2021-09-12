@@ -1011,43 +1011,41 @@
       );
 
     //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    let listTemp = [];
-
-    for (let i = 0; i < 200000; i++) {
-      listTemp.push({
-        name: 'gsd' + i,
-        id: i,
-        size: 20 + Math.random() * 20,
-        url: 'https://avatars.githubusercontent.com/u/495429?v=4' + '?' + Math.random()
-      });
-    }
     var script = {
       name: "MyDemo2",
 
       data() {
-        return {
-          list: listTemp
-        };
+        return {};
       },
 
       props: { ...props
+      },
+      computed: {
+        simpleArray,
+
+        itemsWithSize() {
+          const result = [];
+          const {
+            items,
+            keyField,
+            simpleArray
+          } = this;
+          console.log('gsditemsWithSize', items, keyField, simpleArray);
+
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const id = simpleArray ? i : item[keyField];
+            let size = 40;
+            result.push({
+              item,
+              id,
+              size
+            });
+          }
+
+          return result;
+        }
+
       }
     };
 
@@ -1060,7 +1058,7 @@
       var _c = _vm._self._c || _h;
       return _c("RecycleScroller", {
         staticClass: "scroller",
-        attrs: { buffer: 100, items: _vm.items },
+        attrs: { buffer: 100, "key-field": "id", items: _vm.itemsWithSize },
         scopedSlots: _vm._u(
           [
             {
@@ -1071,7 +1069,7 @@
                 var active = ref.active;
                 return [
                   _vm._t("default", null, null, {
-                    item: itemWithSize,
+                    item: itemWithSize.item,
                     index: index,
                     active: active,
                     itemWithSize: itemWithSize
@@ -1091,7 +1089,7 @@
       /* style */
       const __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = "data-v-f54e73c4";
+      const __vue_scope_id__ = "data-v-3d7183c0";
       /* module identifier */
       const __vue_module_identifier__ = undefined;
       /* functional template */
