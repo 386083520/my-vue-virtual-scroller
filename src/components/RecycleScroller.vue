@@ -75,6 +75,11 @@
                 default: null,
             }
         },
+        watch: {
+            items() {
+                this.updateVisibleItems(true)
+            }
+        },
         data() {
             return {
                 pool: [],

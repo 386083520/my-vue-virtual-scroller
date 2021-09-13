@@ -1507,6 +1507,7 @@
     },
     watch: {
       items: function items() {
+        console.log('gsd6661')
         this.forceUpdate(false);
       },
       simpleArray: {
@@ -1516,6 +1517,7 @@
         immediate: true
       },
       direction: function direction(value) {
+        console.log('gsd6662')
         this.forceUpdate(true);
       }
     },
@@ -1535,6 +1537,8 @@
         var scroller = this.$refs.scroller;
 
         if (scroller) {
+
+          console.log('gsd6663')
           this.forceUpdate();
         }
 
@@ -1739,6 +1743,7 @@
       id: function id() {
         if (!this.size) {
           this.onDataUpdate();
+          console.log('gsd8881')
         }
       },
       finalActive: function finalActive(value) {
@@ -1763,6 +1768,7 @@
             this.unobserveSize();
           }
         } else if (value && this.$_pendingVScrollUpdate === this.id) {
+          console.log('gsd7771')
           this.updateSize();
         }
       }
@@ -1777,6 +1783,7 @@
       if (!this.vscrollResizeObserver) {
         var _loop = function _loop(k) {
           _this.$watch(function () {
+            console.log('gsd8882')
             return _this.sizeDependencies[k];
           }, _this.onDataUpdate);
         };
@@ -1784,13 +1791,14 @@
         for (var k in this.sizeDependencies) {
           _loop(k);
         }
-
+        console.log('gsd111')
         this.vscrollParent.$on('vscroll:update', this.onVscrollUpdate);
         this.vscrollParent.$on('vscroll:update-size', this.onVscrollUpdateSize);
       }
     },
     mounted: function mounted() {
       if (this.vscrollData.active) {
+        console.log('gsd7772')
         this.updateSize();
         this.observeSize();
       }
@@ -1819,6 +1827,7 @@
 
         if (this.watchData) {
           this.$_watchData = this.$watch('data', function () {
+            console.log('gsd8883')
             _this2.onDataUpdate();
           }, {
             deep: true
@@ -1829,6 +1838,7 @@
         }
       },
       onVscrollUpdate: function onVscrollUpdate(_ref) {
+        console.log('gsd999')
         var force = _ref.force;
 
         // If not active, sechedule a size update when it becomes active
@@ -1837,10 +1847,12 @@
         }
 
         if (this.$_forceNextVScrollUpdate === this.id || force || !this.size) {
+          console.log('gsd7773')
           this.updateSize();
         }
       },
       onDataUpdate: function onDataUpdate() {
+        console.log('gsd7774')
         this.updateSize();
       },
       computeSize: function computeSize(id) {

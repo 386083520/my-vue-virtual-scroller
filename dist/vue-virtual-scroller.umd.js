@@ -471,6 +471,12 @@
           default: null
         }
       },
+      watch: {
+        items() {
+          this.updateVisibleItems(true);
+        }
+
+      },
 
       data() {
         return {
@@ -983,7 +989,7 @@
       /* style */
       const __vue_inject_styles__$2 = undefined;
       /* scoped */
-      const __vue_scope_id__$2 = "data-v-22595b24";
+      const __vue_scope_id__$2 = "data-v-2dad2ce7";
       /* module identifier */
       const __vue_module_identifier__$2 = undefined;
       /* functional template */
