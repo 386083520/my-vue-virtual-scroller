@@ -33,7 +33,9 @@
             computeSize (id) {
                 this.$nextTick(() => {
                     if (this.id === id) {
-                        this.applySize('50', '350')
+                        const width = this.$el.offsetWidth
+                        const height = this.$el.offsetHeight
+                        this.applySize(width, height)
                     }
                 })
             },
