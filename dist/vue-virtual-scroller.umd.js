@@ -552,8 +552,7 @@
           if (this.ready) {
             if (isVisible) {
               this.$emit('visible');
-              requestAnimationFrame(() => {
-                this.updateVisibleItems(false);
+              requestAnimationFrame(() => {// this.updateVisibleItems(false)
               });
             } else {
               this.$emit('hidden');
@@ -984,7 +983,7 @@
       /* style */
       const __vue_inject_styles__$2 = undefined;
       /* scoped */
-      const __vue_scope_id__$2 = "data-v-0a3944c4";
+      const __vue_scope_id__$2 = "data-v-22595b24";
       /* module identifier */
       const __vue_module_identifier__$2 = undefined;
       /* functional template */
@@ -1146,6 +1145,7 @@
       mounted() {
         if (this.vscrollData.active) {
           this.updateSize();
+          console.log('gsdmounted', this.id);
         }
       },
 

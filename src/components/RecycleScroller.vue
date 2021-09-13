@@ -142,7 +142,7 @@
                     if (isVisible) {
                         this.$emit('visible')
                         requestAnimationFrame(() => {
-                            this.updateVisibleItems(false)
+                            // this.updateVisibleItems(false)
                         })
                     }else {
                         this.$emit('hidden')
