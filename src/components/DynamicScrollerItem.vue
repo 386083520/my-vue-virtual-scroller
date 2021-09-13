@@ -22,6 +22,13 @@
                 required: true,
             }
         },
+        watch: {
+            id () {
+                if (!this.size) {
+                    this.onDataUpdate()
+                }
+            },
+        },
         methods: {
             updateSize () {
                 if (this.finalActive) {
@@ -29,6 +36,9 @@
                         this.computeSize(this.id)
                     }
                 }
+            },
+            onDataUpdate () {
+                this.updateSize()
             },
             computeSize (id) {
                 this.$nextTick(() => {
@@ -54,7 +64,7 @@
                 return this.active && this.vscrollData.active
             },
             size () {
-                return 0
+                return (this.vscrollData.sizes[this.id]) || 0
             }
         },
         render (h) {

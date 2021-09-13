@@ -1145,7 +1145,6 @@
       mounted() {
         if (this.vscrollData.active) {
           this.updateSize();
-          console.log('gsdmounted', this.id);
         }
       },
 
@@ -1163,6 +1162,14 @@
           required: true
         }
       },
+      watch: {
+        id() {
+          if (!this.size) {
+            this.onDataUpdate();
+          }
+        }
+
+      },
       methods: {
         updateSize() {
           if (this.finalActive) {
@@ -1170,6 +1177,10 @@
               this.computeSize(this.id);
             }
           }
+        },
+
+        onDataUpdate() {
+          this.updateSize();
         },
 
         computeSize(id) {
@@ -1201,7 +1212,7 @@
         },
 
         size() {
-          return 0;
+          return this.vscrollData.sizes[this.id] || 0;
         }
 
       },
